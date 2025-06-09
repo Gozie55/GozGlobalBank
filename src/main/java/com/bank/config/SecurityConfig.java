@@ -44,10 +44,10 @@ public class SecurityConfig {
                         "/", "/favicon.ico", "/api/favicon.ico", "/resources/favicon.ico", "/api/fund", "/api/payment",
                         "/api/register", "/api/transfer", "/api/userExist", "/api/error", "/api/bankMenu",
                         "/api/regPerson", "/api/otp", "/api/validate", "/api/login", "/api/logout", "/api/payment/charge",
-                        "/pages/**", "/pages/images/**", "/webjars/**", "/css/**", "/js/**", "/images/**",
+                        "/pages/**", "/pages/images/**", "/webjars/**", "/css/**", "/js/**", "/images/**", "/error",
                         "/pages/css/**", "/webjars/bootstrap/5.3.3/css/bootstrap.min.css", "/api/payment/stripe-key"
                 ).permitAll()
-                .requestMatchers("/api/public/**", "/api/**").permitAll() // Covers all public APIs
+                .requestMatchers("/api/public/**", "/api/**", "/error").permitAll() // Covers all public APIs
                 .requestMatchers(
                         "/api/TransferMoney", "/api/checkCustomerBalance", "/api/balance",
                         "/api/transactions", "/api/transactionDetails", "/transactions", "/transactionDetails",
