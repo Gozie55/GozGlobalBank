@@ -1,5 +1,8 @@
 # -------- Build stage using JDK 23 --------
-FROM maven:3.9.6-eclipse-temurin-23 AS build
+FROM eclipse-temurin:23-jdk AS build
+
+# Install Maven manually
+RUN apt-get update && apt-get install -y maven
 
 # Set working directory
 WORKDIR /app
