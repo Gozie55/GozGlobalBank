@@ -37,34 +37,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
+            .csrf(csrf -> csrf.disable())
+            .cors(Customizer.withDefaults())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                        "/", "/favicon.ico", "/api/favicon.ico", "/resources/favicon.ico", "/api/fund", "/api/payment",
-                        "/api/register", "/api/transfer", "/api/userExist", "/api/error", "/api/bankMenu","/WEB-INF/pages/",
-                        "/api/regPerson", "/api/otp", "/api/validate", "/api/login", "/api/logout", "/api/payment/charge",
-                        "/pages/**", "/pages/images/**", "/webjars/**", "/css/**", "/js/**", "/images/**", "/error",
-                        "/pages/css/**", "/webjars/bootstrap/5.3.3/css/bootstrap.min.css", "/api/payment/stripe-key"
+                    "/", "/favicon.ico", "/resources/favicon.ico", "/fund", "/payment",
+                    "/register", "/transfer", "/userExist", "/error", "/bankMenu", "/regPerson",
+                    "/otp", "/validate", "/login", "/logout", "/payment/charge",
+                    "/pages/**", "/pages/images/**", "/webjars/**", "/css/**", "/js/**", "/images/**",
+                    "/pages/css/**", "/webjars/bootstrap/5.3.3/css/bootstrap.min.css", "/payment/stripe-key"
                 ).permitAll()
-                .requestMatchers("/api/public/**", "/api/**", "/error","/WEB-INF/pages/").permitAll() // Covers all public APIs
                 .requestMatchers(
-                        "/api/TransferMoney", "/api/checkCustomerBalance", "/api/balance",
-                        "/api/transactions", "/api/transactionDetails", "/transactions", "/transactionDetails",
-                        "/transaction", "/api/pin", "/api/confirmPin", "/api/error", "/error","/WEB-INF/pages/"
-                ).hasAuthority("USER") // User-specific endpoints
+                    "/TransferMoney", "/checkCustomerBalance", "/balance",
+                    "/transactions", "/transactionDetails", "/transaction",
+                    "/pin", "/confirmPin"
+                ).hasAuthority("USER")
                 .anyRequest().authenticated()
-                )
-                .logout(logout -> logout
+            )
+            .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/api/login?logout")
+                .logoutSuccessUrl("/login?logout")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
-                )
-                .formLogin(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            )
+            .formLogin(AbstractHttpConfigurer::disable)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -81,8 +80,8 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-    
-     @Bean
+
+    @Bean
     public InternalResourceViewResolver jspViewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setPrefix("/WEB-INF/pages/");
