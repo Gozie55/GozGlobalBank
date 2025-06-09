@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Component
 @Controller
-@RequestMapping("/api")
 public class AccountController {
 
     @Autowired

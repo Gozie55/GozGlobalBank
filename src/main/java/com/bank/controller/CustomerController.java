@@ -20,7 +20,7 @@ import com.bank.dao.CustomerRepository;
  */
 
 @Controller
-@RequestMapping("/api")
+
 public class CustomerController {
     
     @Autowired

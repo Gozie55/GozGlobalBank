@@ -8,11 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/api")
 public class LoginController {
 
     @Autowired
@@ -22,14 +20,14 @@ public class LoginController {
         this.userservice = userservice;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/login")  // ✅ Removed "/api" prefix
     public ModelAndView login(Customer user, Model model, HttpServletRequest request) {
         // Authenticate user
         String token = userservice.verify(user);
 
         if ("fail".equals(token)) {
             model.addAttribute("error", "Invalid Credentials");
-            return new ModelAndView("login");  // 👈 Show login page on failure
+            return new ModelAndView("pages/login");  // ✅ Correct path to /WEB-INF/pages/login.jsp
         }
 
         // Fetch user from DB
@@ -48,7 +46,7 @@ public class LoginController {
 
         System.out.println("Generated JWT Token: " + token);
 
-        // Render the index.jsp in /pages/
-        return new ModelAndView("index");  // 👈 Correct path
+        // ✅ Correctly render /WEB-INF/pages/index.jsp
+        return new ModelAndView("pages/index");
     }
 }

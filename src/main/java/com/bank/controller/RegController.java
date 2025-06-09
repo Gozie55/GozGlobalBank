@@ -12,7 +12,6 @@ import com.bank.service.UserService;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/api")
 public class RegController {
 
     @Autowired
@@ -34,17 +33,17 @@ public class RegController {
 
     @GetMapping("/register")
     public String registerPage() {
-        return "register"; // ✅ maps to /pages/register.jsp
+        return "pages/register";  // ✅ /WEB-INF/pages/register.jsp
     }
 
     @GetMapping("/otp")
     public String otpPage() {
-        return "otp"; // ✅ /pages/otp.jsp
+        return "pages/otp";  // ✅ /WEB-INF/pages/otp.jsp
     }
 
     @GetMapping("/pin")
     public String pinPage() {
-        return "pin"; // ✅ /pages/pin.jsp
+        return "pages/pin";  // ✅ /WEB-INF/pages/pin.jsp
     }
 
     @PostMapping("/confirmPin")
@@ -54,9 +53,9 @@ public class RegController {
             Customer updateEmail = emailOpt.get();
             updateEmail.setPin(cpin);
             repo.save(updateEmail);
-            return "login"; // ✅ redirect to login page
+            return "pages/login";  // ✅ go to login page
         } else {
-            return "error"; // ✅ fallback
+            return "pages/error";  // ✅ fallback error page
         }
     }
 
@@ -67,12 +66,12 @@ public class RegController {
 
         String response = userservice.checkEmail(email);
         if (response.equals("Email Already Exists")) {
-            return "userExist"; // ✅ return to user exists page
+            return "pages/userExist";  // ✅ user exists page
         }
 
         String otp = otpservice.generateOtp(email);
         emailservice.sendOtpEmail(email, otp);
-        return "otp"; // ✅ show OTP page
+        return "pages/otp";  // ✅ show OTP page
     }
 
     @PostMapping("/validate")
@@ -87,9 +86,9 @@ public class RegController {
                 cust.setAccnumber(phone);
             }
             userservice.registerUser(cust);
-            return "pin"; // ✅ go to set pin page
+            return "pages/pin";  // ✅ go to set pin page
         } else {
-            return "error"; // ✅ OTP invalid
+            return "pages/error";  // ✅ OTP invalid
         }
     }
 }
