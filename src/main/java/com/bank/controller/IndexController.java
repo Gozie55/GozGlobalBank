@@ -22,13 +22,13 @@ public class IndexController {
     public ModelAndView home(Customer person) {
         ModelAndView mv = new ModelAndView();
         mv.addObject("obj", person);
-        mv.setViewName("pages/index");  // ✅ Point to pages/index.jsp
+        mv.setViewName("index");  // ✅ Point to pages/index.jsp
         return mv;
     }
 
     @GetMapping("/login")
     public String login() {
-        return "pages/login";  // ✅ pages/login.jsp
+        return "login";  // ✅ pages/login.jsp
     }
 
     @GetMapping("/index")
@@ -38,7 +38,7 @@ public class IndexController {
 
     @GetMapping("/fund")
     public String fund() {
-        return "pages/fund";  // ✅ pages/fund.jsp
+        return "fund";  // ✅ pages/fund.jsp
     }
 
     @GetMapping("/logout")
