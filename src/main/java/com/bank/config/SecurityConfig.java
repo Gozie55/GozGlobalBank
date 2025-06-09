@@ -1,5 +1,6 @@
 package com.bank.config;
 
+import com.bank.filter.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebSecurity
@@ -36,34 +38,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(Customizer.withDefaults())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
-                        "/", "/favicon.ico", "/api/favicon.ico", "/resources/favicon.ico", "/api/fund", "/api/payment",
-                        "/api/register", "/api/transfer", "/api/userExist", "/api/error", "/api/bankMenu",
-                        "/api/regPerson", "/api/otp", "/api/validate", "/api/login", "/api/logout", "/api/payment/charge",
-                        "/pages/**", "/pages/images/**", "/webjars/**", "/css/**", "/js/**", "/images/**", "/error",
-                        "/pages/css/**", "/webjars/bootstrap/5.3.3/css/bootstrap.min.css", "/api/payment/stripe-key"
+                    "/", "/login", "/logout", "/error", "/favicon.ico",
+                    "/api/register", "/api/login", "/api/logout", "/api/userExist",
+                    "/api/otp", "/api/validate", "/api/fund", "/api/transfer",
+                    "/api/payment", "/api/payment/charge", "/api/payment/stripe-key",
+                    "/api/regPerson", "/api/bankMenu", "/api/public/**",
+                    "/pages/**", "/pages/images/**", "/css/**", "/js/**", "/images/**", "/webjars/**"
                 ).permitAll()
-                .requestMatchers("/api/public/**", "/api/**", "/error").permitAll() // Covers all public APIs
                 .requestMatchers(
-                        "/api/TransferMoney", "/api/checkCustomerBalance", "/api/balance",
-                        "/api/transactions", "/api/transactionDetails", "/transactions", "/transactionDetails",
-                        "/transaction", "/api/pin", "/api/confirmPin", "/api/error", "/error"
-                ).hasAuthority("USER") // User-specific endpoints
+                    "/api/TransferMoney", "/api/checkCustomerBalance", "/api/balance",
+                    "/api/transactions", "/api/transactionDetails", "/transactions",
+                    "/transactionDetails", "/transaction", "/api/pin", "/api/confirmPin"
+                ).hasAuthority("USER")
                 .anyRequest().authenticated()
-                )
-                .logout(logout -> logout
+            )
+            .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/api/login?logout")
+                .logoutSuccessUrl("/login?logout")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
-                )
-                .formLogin(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            )
+            .formLogin(AbstractHttpConfigurer::disable)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -71,7 +73,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        provider.setPasswordEncoder(passwordEncoder());
         provider.setUserDetailsService(userDetailsService);
         return provider;
     }
@@ -79,5 +81,14 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    // ✅ JSP View Resolver to load views from /WEB-INF/pages/
+    @Bean
+    public InternalResourceViewResolver jspViewResolver() {
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        resolver.setPrefix("/WEB-INF/pages/");
+        resolver.setSuffix(".jsp");
+        return resolver;
     }
 }

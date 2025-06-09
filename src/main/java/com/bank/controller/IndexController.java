@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("api/")
+@RequestMapping("/api")
 public class IndexController {
+
+    @GetMapping("/")
+    public String rootRedirect() {
+        return "redirect:/api/index";
+    }
 
     @GetMapping("/home")
     public ModelAndView home(Customer person) {
