@@ -163,7 +163,7 @@ public class AccountController {
         return ResponseEntity.ok("✅ Transfer successful! New balance: ₦" + sender.getBalance());
     }
 
-    @GetMapping("/balance")
+    @GetMapping("/account-balance")
     public ResponseEntity<?> getBalance(HttpSession session) {
         Object sessionUser = session.getAttribute("user");
 

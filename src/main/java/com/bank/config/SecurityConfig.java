@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/TransferMoney", "/checkCustomerBalance", "/balance",
                     "/transactions", "/transactionDetails", "/transaction",
-                    "/pin", "/confirmPin"
+                    "/pin", "/confirmPin","/account-balance"
                 ).hasAuthority("USER")
                 .anyRequest().authenticated()
             )

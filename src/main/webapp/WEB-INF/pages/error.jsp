@@ -24,11 +24,9 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-body">
-                            <h2 class="text-center">Error 404: Page Not Found</h2>
-                            <p class="text-center">We apologize, but the page you're looking for does not exist or User does not exist</p>
-                            <div class="text-center">
-                                <a href="/api/logout" class="btn btn-primary">Return to Home Page</a>
-                            </div>
+                            <h1>Oops! Something went wrong.</h1>
+                            <p>${message}</p>
+                            <a href="/index">Return Home</a>
                         </div>
                     </div>
                 </div>
