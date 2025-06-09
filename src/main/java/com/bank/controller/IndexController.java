@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.bank.controller;
 
 import com.bank.entity.Customer;
@@ -13,10 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-/**
- *
- * @author CHIGOZIE IWUJI
- */
 @Controller
 @RequestMapping("api/")
 public class IndexController {
@@ -25,39 +17,36 @@ public class IndexController {
     public ModelAndView home(Customer person) {
         ModelAndView mv = new ModelAndView();
         mv.addObject("obj", person);
-        mv.setViewName("index");
+        mv.setViewName("pages/index");  // ✅ Point to pages/index.jsp
         return mv;
     }
 
     @GetMapping("/login")
     public String login() {
-        return ("login");
+        return "pages/login";  // ✅ pages/login.jsp
     }
 
     @GetMapping("/index")
     public String index() {
-        return ("index");
+        return "pages/index";  // ✅ pages/index.jsp
     }
 
     @GetMapping("/fund")
     public String fund() {
-        return ("fund");
+        return "pages/fund";  // ✅ pages/fund.jsp
     }
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
-        // Invalidate the session
         request.getSession().invalidate();
 
-        // Remove the JWT token cookie
         Cookie cookie = new Cookie("jwt", null);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true); // Set to false for local development if needed
+        cookie.setSecure(true); // You can set this to false locally
         cookie.setPath("/");
-        cookie.setMaxAge(0); // Delete the cookie
-
+        cookie.setMaxAge(0);
         response.addCookie(cookie);
 
-        return "redirect:/api/index"; // Redirect to home page
+        return "redirect:/api/index";  // Redirects to pages/index.jsp via /index route
     }
 }
