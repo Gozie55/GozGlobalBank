@@ -34,17 +34,17 @@ public class RegController {
 
     @GetMapping("/register")
     public String registerPage() {
-        return "pages/register"; // ✅ maps to /pages/register.jsp
+        return "register"; // ✅ maps to /pages/register.jsp
     }
 
     @GetMapping("/otp")
     public String otpPage() {
-        return "pages/otp"; // ✅ /pages/otp.jsp
+        return "otp"; // ✅ /pages/otp.jsp
     }
 
     @GetMapping("/pin")
     public String pinPage() {
-        return "pages/pin"; // ✅ /pages/pin.jsp
+        return "pin"; // ✅ /pages/pin.jsp
     }
 
     @PostMapping("/confirmPin")
@@ -54,9 +54,9 @@ public class RegController {
             Customer updateEmail = emailOpt.get();
             updateEmail.setPin(cpin);
             repo.save(updateEmail);
-            return "pages/login"; // ✅ redirect to login page
+            return "login"; // ✅ redirect to login page
         } else {
-            return "pages/error"; // ✅ fallback
+            return "error"; // ✅ fallback
         }
     }
 
@@ -67,12 +67,12 @@ public class RegController {
 
         String response = userservice.checkEmail(email);
         if (response.equals("Email Already Exists")) {
-            return "pages/userExist"; // ✅ return to user exists page
+            return "userExist"; // ✅ return to user exists page
         }
 
         String otp = otpservice.generateOtp(email);
         emailservice.sendOtpEmail(email, otp);
-        return "pages/otp"; // ✅ show OTP page
+        return "otp"; // ✅ show OTP page
     }
 
     @PostMapping("/validate")
@@ -87,9 +87,9 @@ public class RegController {
                 cust.setAccnumber(phone);
             }
             userservice.registerUser(cust);
-            return "pages/pin"; // ✅ go to set pin page
+            return "pin"; // ✅ go to set pin page
         } else {
-            return "pages/error"; // ✅ OTP invalid
+            return "error"; // ✅ OTP invalid
         }
     }
 }
