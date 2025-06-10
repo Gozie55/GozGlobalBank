@@ -27,7 +27,7 @@ public class LoginController {
 
         if ("fail".equals(token)) {
             model.addAttribute("error", "Invalid Credentials");
-            return new ModelAndView("pages/login");  // ✅ Correct path to /WEB-INF/pages/login.jsp
+            return new ModelAndView("login");  // ✅ Correct path to /WEB-INF/pages/login.jsp
         }
 
         // Fetch user from DB
@@ -47,6 +47,6 @@ public class LoginController {
         System.out.println("Generated JWT Token: " + token);
 
         // ✅ Correctly render /WEB-INF/pages/index.jsp
-        return new ModelAndView("pages/index");
+        return new ModelAndView("index");
     }
 }

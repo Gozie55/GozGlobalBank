@@ -25,7 +25,7 @@
                     var accountNumber = $(this).val();
                     if (accountNumber.length === 10) {
                         $.ajax({
-                            url: "/api/getCustomerDetails",
+                            url: "/getCustomerDetails",
                             type: "GET",
                             data: {accountNumber: accountNumber},
                             success: function (response) {
@@ -49,7 +49,7 @@
 
                     if (amount > 0 && accountNumber.length === 10) {
                         $.ajax({
-                            url: "/api/checkCustomerBalance",
+                            url: "/checkCustomerBalance",
                             type: "GET",
                             data: {amount: amount},
                             success: function (response) {
@@ -102,7 +102,7 @@
                     }
 
                     $.ajax({
-                        url: "/api/TransferMoney",
+                        url: "/TransferMoney",
                         type: "POST",
                         contentType: "application/x-www-form-urlencoded",
                         data: {accountNumber: accountNumber, amount: amount, pin: pin},
@@ -111,7 +111,7 @@
 
                             // ✅ Fetch updated balance after transfer
                             $.ajax({
-                                url: "/api/balance",
+                                url: "/balance",
                                 type: "GET",
                                 success: function (newBalance) {
                                     $("#balanceDisplay").text("Your Balance: ₦" + newBalance.toLocaleString());

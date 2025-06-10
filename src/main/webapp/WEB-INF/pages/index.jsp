@@ -115,7 +115,7 @@
         <div class="hero-section">
             <div class="container">
                 <h1>Welcome to GozGlobal Bank</h1>
-                <h1>${user==null ? "" : user}</h1>
+                <h1>${user.username}</h1>
 
                 <p>Your trusted partner in banking. Secure, fast, and reliable banking services for everyone.</p>
                 <div class="cta-buttons">
@@ -124,12 +124,12 @@
                     <h3 id="balance">${user == null ? "" : 'Balance: '.concat(formattedBalance)}</h3>
 
                     ${user==null ? 
-                      '<a href="/api/register" class="btn btn-light btn-lg">Register</a>
-                      <a href="/api/login" class="btn btn-outline-light btn-lg">Login</a>' 
+                      '<a href="/register" class="btn btn-light btn-lg">Register</a>
+                      <a href="/login" class="btn btn-outline-light btn-lg">Login</a>' 
                       : 
-                      '<a href="/api/fund" class="btn btn-light btn-lg">Fund Account</a>
-                      <a href="/api/transfer" class="btn btn-outline-light btn-lg">Transfer</a>
-                      <a href="/api/transactions" class="btn btn-transaction">Transaction History</a>'
+                      '<a href="/fund" class="btn btn-light btn-lg">Fund Account</a>
+                      <a href="/transfer" class="btn btn-outline-light btn-lg">Transfer</a>
+                      <a href="/transactions" class="btn btn-transaction">Transaction History</a>'
                     }
                 </div>
 

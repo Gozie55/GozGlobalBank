@@ -67,19 +67,19 @@
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav ms-auto"> <!-- Align links to the right -->
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/api/index">Home</a>
+                            <a class="nav-link active" aria-current="page" href="/">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/api/login">Login</a>
+                            <a class="nav-link" href="/login">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/api/register">Register</a>
+                            <a class="nav-link" href="/register">Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="about">About</a>
+                            <a class="nav-link" href="/about">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="services">Services</a>
+                            <a class="nav-link" href="/services">Services</a>
                         </li>
                         
                         <!-- Logout Button (Now Aligned Properly) -->

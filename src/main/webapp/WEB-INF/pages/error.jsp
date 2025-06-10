@@ -26,7 +26,7 @@
                         <div class="card-body">
                             <h1>Oops! Something went wrong.</h1>
                             <p>${message}</p>
-                            <a href="/index">Return Home</a>
+                            <a href="/">Return Home</a>
                         </div>
                     </div>
                 </div>

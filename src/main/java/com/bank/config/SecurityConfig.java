@@ -42,16 +42,16 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/", "/favicon.ico", "/resources/favicon.ico", "/fund", "/payment",
+                    "/", "/favicon.ico", "/resources/favicon.ico", "/fund", "/payment", "/transactions",
                     "/register", "/transfer", "/userExist", "/error", "/bankMenu", "/regPerson",
-                    "/otp", "/validate", "/login", "/logout", "/payment/charge",
+                    "/otp", "/validate", "/login", "/resources/**", "/logout", "/payment/charge", "/WEB-INF/**",
                     "/pages/**", "/pages/images/**", "/webjars/**", "/css/**", "/js/**", "/images/**",
                     "/pages/css/**", "/webjars/bootstrap/5.3.3/css/bootstrap.min.css", "/payment/stripe-key"
                 ).permitAll()
                 .requestMatchers(
                     "/TransferMoney", "/checkCustomerBalance", "/balance",
                     "/transactions", "/transactionDetails", "/transaction",
-                    "/pin", "/confirmPin","/account-balance"
+                    "/pin", "/confirmPin","/account-balance", "/",  "/WEB-INF/**", "/WEB-INF/pages/"
                 ).hasAuthority("USER")
                 .anyRequest().authenticated()
             )
@@ -62,7 +62,7 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
-            .formLogin(AbstractHttpConfigurer::disable)
+//            .formLogin(AbstractHttpConfigurer::disable)
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

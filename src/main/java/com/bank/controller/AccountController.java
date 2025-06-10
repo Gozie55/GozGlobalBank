@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Component
 @Controller
+
 public class AccountController {
 
     @Autowired
@@ -163,7 +164,7 @@ public class AccountController {
         return ResponseEntity.ok("✅ Transfer successful! New balance: ₦" + sender.getBalance());
     }
 
-    @GetMapping("/account-balance")
+    @GetMapping("/balance")
     public ResponseEntity<?> getBalance(HttpSession session) {
         Object sessionUser = session.getAttribute("user");
 

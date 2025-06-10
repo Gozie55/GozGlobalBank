@@ -11,27 +11,24 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class IndexController {
 
-    @GetMapping("/")
-    public String root() {
-        return "pages/index";  // ✅ maps to /WEB-INF/pages/index.jsp
-    }
+    
 
-    @GetMapping("/home")
+    @GetMapping("/")
     public ModelAndView home(Customer person) {
         ModelAndView mv = new ModelAndView();
         mv.addObject("obj", person);
-        mv.setViewName("pages/index");  // ✅ maps to /WEB-INF/pages/index.jsp
+        mv.setViewName("index");  // ✅ maps to /WEB-INF/pages/index.jsp
         return mv;
     }
 
     @GetMapping("/login")
     public String login() {
-        return "pages/login";
+        return "login";
     }
 
     @GetMapping("/fund")
     public String fund() {
-        return "pages/fund";
+        return "fund";
     }
 
     @GetMapping("/logout")
