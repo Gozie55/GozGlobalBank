@@ -18,7 +18,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # -------- Production stage using Tomcat --------
-FROM tomcat:latest
+FROM tomcat:9-jdk17
 
 WORKDIR /usr/local/tomcat/webapps/
 
