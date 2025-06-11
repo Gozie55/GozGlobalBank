@@ -4,50 +4,17 @@ import com.bank.entity.Customer;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@RequestMapping("/index")
 public class IndexController {
 
-//    @GetMapping({"/", "/index"})
-//    public ModelAndView home(Customer person) {
-//        ModelAndView mv = new ModelAndView();
-//        mv.addObject("obj", person);
-//        mv.setViewName("index");  // ✅ maps to /WEB-INF/pages/index.jsp
-//        return mv;
-//    }
-    
-    @GetMapping({"/", "/index"})
-public ModelAndView home(HttpServletRequest request) {
-    Customer user = (Customer) request.getSession().getAttribute("user");
-
-    ModelAndView mv = new ModelAndView();
-    mv.addObject("user", user);
-
-    if (user != null) {
-        mv.addObject("formattedBalance", String.format("%.2f", user.getBalance()));
-    }
-
-    mv.setViewName("index");
-    return mv;
-}
-
-
-    @GetMapping("/test")
-    public String test() {
-        return "index"; // Should load index.jsp from /WEB-INF/pages/
-    }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
-    @GetMapping("/fund")
-    public String fund() {
-        return "fund";
+    @GetMapping
+    public String index(HttpServletRequest request) {
+        Customer user = (Customer) request.getSession().getAttribute("user");
+        return user != null ? "Welcome " + user.getUsername() + ", balance: ₦" + user.getBalance()
+                            : "Guest mode. Please log in.";
     }
 
     @GetMapping("/logout")
@@ -56,11 +23,11 @@ public ModelAndView home(HttpServletRequest request) {
 
         Cookie cookie = new Cookie("jwt", null);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true); // Set to false locally if needed
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
 
-        return "redirect:/";
+        return "Logged out successfully";
     }
 }

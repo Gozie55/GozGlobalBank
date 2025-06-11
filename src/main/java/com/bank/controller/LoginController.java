@@ -4,13 +4,12 @@ import com.bank.entity.Customer;
 import com.bank.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class LoginController {
 
     @Autowired
@@ -20,33 +19,25 @@ public class LoginController {
         this.userservice = userservice;
     }
 
-    @PostMapping("/login")  // ✅ Removed "/api" prefix
-    public ModelAndView login(Customer user, Model model, HttpServletRequest request) {
-        // Authenticate user
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Customer user, HttpServletRequest request) {
         String token = userservice.verify(user);
 
         if ("fail".equals(token)) {
-            model.addAttribute("error", "Invalid Credentials");
-            return new ModelAndView("login");  // ✅ Correct path to /WEB-INF/pages/login.jsp
+            return ResponseEntity.status(401).body("Invalid Credentials");
         }
 
-        // Fetch user from DB
         Customer authenticatedUser = userservice.getUserByUsername(user.getUsername());
 
-        // Store session attributes
         HttpSession session = request.getSession();
         session.setAttribute("token", token);
         session.setAttribute("user", authenticatedUser.getUsername());
         session.setAttribute("balance", authenticatedUser.getBalance());
 
-        // Pass values to JSP
-        model.addAttribute("token", token);
-        model.addAttribute("user", authenticatedUser);
-        model.addAttribute("balance", authenticatedUser.getBalance());
-
-        System.out.println("Generated JWT Token: " + token);
-
-        // ✅ Correctly render /WEB-INF/pages/index.jsp
-        return new ModelAndView("index");
+        return ResponseEntity.ok(Map.of(
+                "message", "Login successful",
+                "token", token,
+                "user", authenticatedUser
+        ));
     }
 }

@@ -1,94 +1,115 @@
 package com.bank.controller;
 
-import com.bank.entity.Customer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 import com.bank.dao.CustomerRepository;
+import com.bank.entity.Customer;
 import com.bank.service.EmailService;
 import com.bank.service.OtpService;
 import com.bank.service.UserService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
-@Controller
+@RestController
+@RequestMapping("/auth")
 public class RegController {
 
     @Autowired
-    CustomerRepository repo;
+    private CustomerRepository repo;
 
-    final OtpService otpservice;
-    final EmailService emailservice;
-    final UserService userservice;
+    @Autowired
+    private OtpService otpService;
 
-    // Hold temporary registration values
-    private String email;
-    private Customer cust;
+    @Autowired
+    private EmailService emailService;
 
-    public RegController(OtpService otpservice, EmailService emailService, UserService userservice) {
-        this.otpservice = otpservice;
-        this.emailservice = emailService;
-        this.userservice = userservice;
-    }
+    @Autowired
+    private UserService userService;
 
-    @GetMapping("/register")
-    public String registerPage() {
-        return "register";  // ✅ /WEB-INF/pages/register.jsp
-    }
+    @Autowired
+    private HttpSession session;
 
-    @GetMapping("/otp")
-    public String otpPage() {
-        return "otp";  // ✅ /WEB-INF/pages/otp.jsp
-    }
+    // ✅ Step 1: Start Registration
+    @PostMapping("/register")
+    public Map<String, Object> registerCustomer(@RequestBody Customer cust) {
+        String email = cust.getEmail();
+        String response = userService.checkEmail(email);
 
-    @GetMapping("/pin")
-    public String pinPage() {
-        return "pin";  // ✅ /WEB-INF/pages/pin.jsp
-    }
-
-    @PostMapping("/confirmPin")
-    public String confirmPin(@RequestParam int cpin) {
-        Optional<Customer> emailOpt = repo.findByEmail(email);
-        if (emailOpt.isPresent()) {
-            Customer updateEmail = emailOpt.get();
-            updateEmail.setPin(cpin);
-            repo.save(updateEmail);
-            return "login";  // ✅ go to login page
-        } else {
-            return "error";  // ✅ fallback error page
-        }
-    }
-
-    @PostMapping("/regPerson")
-    public String registerCustomer(Customer cust, @RequestParam String email) {
-        this.email = email;
-        this.cust = cust;
-
-        String response = userservice.checkEmail(email);
         if (response.equals("Email Already Exists")) {
-            return "userExist";  // ✅ user exists page
+            return Map.of("status", "error", "message", "Email already exists");
         }
 
-        String otp = otpservice.generateOtp(email);
-        emailservice.sendOtpEmail(email, otp);
-        return "otp";  // ✅ show OTP page
+        // ✅ Generate and send OTP
+        String otp = otpService.generateOtp(email);
+        emailService.sendOtpEmail(email, otp);
+
+        // ✅ Temporarily store user in session
+        session.setAttribute("pendingUser", cust);
+        session.setAttribute("pendingEmail", email);
+
+        return Map.of("status", "otp_sent", "message", "OTP sent to " + email);
     }
 
-    @PostMapping("/validate")
-    public String validateOtp(@RequestParam String otp) {
-        boolean isValid = otpservice.validate(email, otp);
-        if (isValid) {
-            String phone = String.valueOf(cust.getPhone());
-            if (phone != null && phone.startsWith("0")) {
-                String accountNumber = phone.substring(1);
-                cust.setAccnumber(accountNumber);
-            } else {
-                cust.setAccnumber(phone);
-            }
-            userservice.registerUser(cust);
-            return "pin";  // ✅ go to set pin page
+    // ✅ Step 2: Validate OTP
+    @PostMapping("/validate-otp")
+    public Map<String, Object> validateOtp(@RequestParam String otp) {
+        String email = (String) session.getAttribute("pendingEmail");
+        Customer cust = (Customer) session.getAttribute("pendingUser");
+
+        if (email == null || cust == null) {
+            return Map.of("status", "error", "message", "Session expired. Please register again.");
+        }
+
+        boolean isValid = otpService.validate(email, otp);
+
+        if (!isValid) {
+            return Map.of("status", "error", "message", "Invalid OTP");
+        }
+
+        // ✅ Create account number from phone
+        String phone = String.valueOf(cust.getPhone());
+        if (phone != null && phone.startsWith("0")) {
+            cust.setAccnumber(phone.substring(1));
         } else {
-            return "error";  // ✅ OTP invalid
+            cust.setAccnumber(phone);
         }
+
+        // ✅ Save user (without PIN yet)
+        userService.registerUser(cust);
+
+        // ✅ Save email for PIN confirmation step
+        session.setAttribute("verifiedEmail", email);
+
+        return Map.of("status", "otp_verified", "message", "OTP verified. Proceed to set PIN.");
     }
+
+    // ✅ Step 3: Set PIN
+    @PostMapping("/set-pin")
+    public Map<String, Object> confirmPin(@RequestParam int pin) {
+        String email = (String) session.getAttribute("verifiedEmail");
+
+        if (email == null) {
+            return Map.of("status", "error", "message", "Session expired. Please register again.");
+        }
+
+        Optional<Customer> customerOpt = repo.findByEmail(email);
+
+        if (customerOpt.isEmpty()) {
+            return Map.of("status", "error", "message", "User not found");
+        }
+
+        Customer customer = customerOpt.get();
+        customer.setPin(pin); // ❗ Ideally hash the PIN before saving
+        repo.save(customer);
+
+        // ✅ Clean up session
+        session.removeAttribute("verifiedEmail");
+        session.removeAttribute("pendingUser");
+        session.removeAttribute("pendingEmail");
+
+        return Map.of("status", "success", "message", "PIN set successfully. You can now log in.");
+    }
+
 }

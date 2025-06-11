@@ -83,19 +83,22 @@ public class PaymentController {
         return Map.of("publishableKey", stripePublishableKey);
     }
 
+
+    // ✅ Get current user balance
     @GetMapping("/balance")
     public Map<String, Object> getBalance() {
         Object userObj = session.getAttribute("user");
-        Map<String, Object> response = new HashMap<>();
 
-        if (userObj != null) {
-            Customer customer = repo.findByUsername(userObj.toString());
-            response.put("balance", customer.getBalance());
-        } else {
-            response.put("balance", 0);
+        if (userObj == null) {
+            return Map.of("status", "error", "message", "User not logged in", "balance", 0);
         }
 
-        return response;
+        Customer customer = repo.findByUsername(userObj.toString());
+        if (customer == null) {
+            return Map.of("status", "error", "message", "Customer not found", "balance", 0);
+        }
+
+        return Map.of("status", "success", "balance", customer.getBalance());
     }
 
 }
