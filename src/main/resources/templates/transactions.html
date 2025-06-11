@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Transaction History</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        table {
+            background-color: white;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ✅ Include Navbar -->
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <h2 class="text-center">Your Transactions</h2>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Username</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Date & Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- ✅ If No Transactions -->
+        <tr th:if="${#lists.isEmpty(transactions)}">
+            <td colspan="7" class="text-center">No transactions found</td>
+        </tr>
+
+        <!-- ✅ For Each Transaction -->
+        <tr th:each="transaction : ${transactions}">
+            <td th:text="${transaction.id}">1</td>
+            <td th:text="${transaction.username}">johndoe</td>
+            <td>
+                <span th:if="${transaction.transactionType == 'SENT'}" style="color: red;">Sent</span>
+                <span th:if="${transaction.transactionType != 'SENT'}" style="color: green;">Received</span>
+            </td>
+            <td th:text="${#numbers.formatCurrency(transaction.amount, 'en', 'NGN')}">₦1,000.00</td>
+            <td th:text="${transaction.senderAccount}">1234567890</td>
+            <td th:text="${transaction.receiverAccount}">0987654321</td>
+            <td th:text="${#temporals.format(transaction.timestamp, 'dd MMM yyyy HH:mm')}">01 Jun 2025 15:30</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

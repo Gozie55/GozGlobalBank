@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>GozGlobal Bank OTP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"/>
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js" defer></script>
+</head>
+<body>
+
+    <!-- Include the Thymeleaf navbar fragment -->
+    <div th:insert="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h3>GozGlobal Bank OTP Verification</h3>
+                        <p class="mb-0">Enter the OTP sent to your email or phone</p>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/validate}" method="post">
+                            <div class="mb-3">
+                                <label for="otp" class="form-label">Enter OTP</label>
+                                <input type="number" class="form-control" id="otp" name="otp" placeholder="Enter OTP here" required>
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                            </div>
+
+                            <div class="d-grid">
+                                <a th:href="@{/resend-otp}" class="btn btn-secondary btn-lg">Resend OTP</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

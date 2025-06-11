@@ -11,13 +11,29 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class IndexController {
 
+//    @GetMapping({"/", "/index"})
+//    public ModelAndView home(Customer person) {
+//        ModelAndView mv = new ModelAndView();
+//        mv.addObject("obj", person);
+//        mv.setViewName("index");  // ✅ maps to /WEB-INF/pages/index.jsp
+//        return mv;
+//    }
+    
     @GetMapping({"/", "/index"})
-    public ModelAndView home(Customer person) {
-        ModelAndView mv = new ModelAndView();
-        mv.addObject("obj", person);
-        mv.setViewName("index");  // ✅ maps to /WEB-INF/pages/index.jsp
-        return mv;
+public ModelAndView home(HttpServletRequest request) {
+    Customer user = (Customer) request.getSession().getAttribute("user");
+
+    ModelAndView mv = new ModelAndView();
+    mv.addObject("user", user);
+
+    if (user != null) {
+        mv.addObject("formattedBalance", String.format("%.2f", user.getBalance()));
     }
+
+    mv.setViewName("index");
+    return mv;
+}
+
 
     @GetMapping("/test")
     public String test() {

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fund GozGlobal Account</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" />
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}" defer></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-label {
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ✅ Navbar Fragment Include -->
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
+<!-- ✅ Main Content -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h4 class="text-center mb-4">Fund Your GozGlobal Account</h4>
+
+                <!-- ✅ Fund Form -->
+                <form th:action="@{/fund}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="number" class="form-control" id="amount" name="amount" min="1" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="source" class="form-label">Funding Source</label>
+                        <select class="form-select" id="source" name="source" required>
+                            <option value="">-- Select Source --</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="card_payment">Card Payment</option>
+                            <option value="ussd">USSD</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Proceed to Fund</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

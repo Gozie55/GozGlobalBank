@@ -1,13 +1,29 @@
-# Use an official Tomcat image
-FROM tomcat:9.0-jdk17
+# -------- Build stage using JDK 23 --------
+FROM eclipse-temurin:23-jdk AS build
 
-# Remove default webapps to avoid conflicts
-RUN rm -rf /usr/local/tomcat/webapps/*
+# Install Maven manually
+RUN apt-get update && apt-get install -y maven
 
-# Copy your WAR file into Tomcat's webapps directory
-COPY target/GozGlobal-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+# Set working directory
+WORKDIR /app
 
-# Expose the Tomcat port
-EXPOSE 8080
+# Copy pom.xml and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-CMD ["catalina.sh", "run"]
+# Copy the rest of the source code
+COPY . .
+
+# Compile and package the application, skipping tests
+RUN mvn clean package -DskipTests
+
+# -------- Production stage using JDK 23 --------
+FROM eclipse-temurin:23-jdk
+
+WORKDIR /app
+
+# Copy compiled jar from build stage
+COPY --from=build /app/target/GozGlobal-0.0.1-SNAPSHOT.jar app.jar
+
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
