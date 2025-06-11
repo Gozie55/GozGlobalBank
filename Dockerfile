@@ -5,7 +5,7 @@ FROM tomcat:9.0-jdk17
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Copy your WAR file into Tomcat's webapps directory
-COPY target/GozGlobal.war /usr/local/tomcat/webapps/ROOT.war
+COPY target/GozGlobal-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
 # Expose the Tomcat port
 EXPOSE 8080
