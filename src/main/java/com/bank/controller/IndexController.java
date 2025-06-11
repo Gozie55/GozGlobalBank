@@ -21,11 +21,7 @@ public class IndexController {
         return mv;
     }
     
-    @GetMapping("/")
-    public String index() {
-        return "index";
-    }
-    
+        
     @GetMapping("/login")
     public String login() {
         return "login";
