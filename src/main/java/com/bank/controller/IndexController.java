@@ -11,17 +11,19 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class IndexController {
 
-    
-
-    @GetMapping("/")
+    @GetMapping({"/", "/index"})
     public ModelAndView home(Customer person) {
         ModelAndView mv = new ModelAndView();
         mv.addObject("obj", person);
         mv.setViewName("index");  // ✅ maps to /WEB-INF/pages/index.jsp
         return mv;
     }
-    
-        
+
+    @GetMapping("/test")
+    public String test() {
+        return "index"; // Should load index.jsp from /WEB-INF/pages/
+    }
+
     @GetMapping("/login")
     public String login() {
         return "login";
