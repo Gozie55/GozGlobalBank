@@ -20,7 +20,12 @@ public class IndexController {
         mv.setViewName("index");  // ✅ maps to /WEB-INF/pages/index.jsp
         return mv;
     }
-
+    
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+    
     @GetMapping("/login")
     public String login() {
         return "login";
