@@ -24,7 +24,7 @@ public class LoginController {
         String token = userservice.verify(user);
 
         if ("fail".equals(token)) {
-            return ResponseEntity.status(401).body("Invalid Credentials");
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid Credentials"));
         }
 
         Customer authenticatedUser = userservice.getUserByUsername(user.getUsername());

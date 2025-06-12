@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/auth")
 public class RegController {
 
     @Autowired
@@ -31,26 +30,35 @@ public class RegController {
     @Autowired
     private HttpSession session;
 
-    // ✅ Step 1: Start Registration
+    // ✅ Step 1: Register and send OTP
     @PostMapping("/register")
-    public Map<String, Object> registerCustomer(@RequestBody Customer cust) {
-        String email = cust.getEmail();
-        String response = userService.checkEmail(email);
-
-        if (response.equals("Email Already Exists")) {
-            return Map.of("status", "error", "message", "Email already exists");
-        }
-
-        // ✅ Generate and send OTP
-        String otp = otpService.generateOtp(email);
-        emailService.sendOtpEmail(email, otp);
-
-        // ✅ Temporarily store user in session
-        session.setAttribute("pendingUser", cust);
-        session.setAttribute("pendingEmail", email);
-
-        return Map.of("status", "otp_sent", "message", "OTP sent to " + email);
+public Map<String, Object> registerCustomer(@RequestBody Customer cust) {
+    if (cust == null || cust.getEmail() == null || cust.getRole() == null) {
+        return Map.of("status", "error", "message", "Missing required fields");
     }
+
+    String email = cust.getEmail();
+    System.out.println("Registering user with email: " + email);
+
+    String response = userService.checkEmail(email);
+    if ("Email Already Exists".equals(response)) {
+        return Map.of("status", "error", "message", "Email already exists");
+    }
+
+    String otp = otpService.generateOtp(email);
+
+    try {
+        emailService.sendOtpEmail(email, otp);
+    } catch (Exception e) {
+        System.err.println("Failed to send OTP email: " + e.getMessage());
+        return Map.of("status", "error", "message", "Failed to send OTP email. Please try again.");
+    }
+
+    session.setAttribute("pendingUser", cust);
+    session.setAttribute("pendingEmail", email);
+
+    return Map.of("status", "otp_sent", "message", "OTP sent to " + email);
+}
 
     // ✅ Step 2: Validate OTP
     @PostMapping("/validate-otp")
@@ -68,18 +76,15 @@ public class RegController {
             return Map.of("status", "error", "message", "Invalid OTP");
         }
 
-        // ✅ Create account number from phone
+        // Generate account number from phone
         String phone = String.valueOf(cust.getPhone());
-        if (phone != null && phone.startsWith("0")) {
+        if (phone.startsWith("0")) {
             cust.setAccnumber(phone.substring(1));
         } else {
             cust.setAccnumber(phone);
         }
 
-        // ✅ Save user (without PIN yet)
         userService.registerUser(cust);
-
-        // ✅ Save email for PIN confirmation step
         session.setAttribute("verifiedEmail", email);
 
         return Map.of("status", "otp_verified", "message", "OTP verified. Proceed to set PIN.");
@@ -101,15 +106,13 @@ public class RegController {
         }
 
         Customer customer = customerOpt.get();
-        customer.setPin(pin); // ❗ Ideally hash the PIN before saving
+        customer.setPin(pin);
         repo.save(customer);
 
-        // ✅ Clean up session
         session.removeAttribute("verifiedEmail");
         session.removeAttribute("pendingUser");
         session.removeAttribute("pendingEmail");
 
         return Map.of("status", "success", "message", "PIN set successfully. You can now log in.");
     }
-
 }

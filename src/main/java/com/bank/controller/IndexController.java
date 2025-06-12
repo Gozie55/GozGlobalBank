@@ -6,19 +6,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping("/index")
+@RequestMapping("/")
 public class IndexController {
 
     @GetMapping
-    public String index(HttpServletRequest request) {
+    public Map<String, Object> index(HttpServletRequest request) {
         Customer user = (Customer) request.getSession().getAttribute("user");
-        return user != null ? "Welcome " + user.getUsername() + ", balance: ₦" + user.getBalance()
-                            : "Guest mode. Please log in.";
+        return user != null
+            ? Map.of("message", "Welcome " + user.getUsername(), "balance", user.getBalance())
+            : Map.of("message", "Guest mode. Please log in.");
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> logout(HttpServletRequest request, HttpServletResponse response) {
         request.getSession().invalidate();
 
         Cookie cookie = new Cookie("jwt", null);
@@ -28,6 +31,6 @@ public class IndexController {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
 
-        return "Logged out successfully";
+        return Map.of("message", "Logged out successfully");
     }
 }

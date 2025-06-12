@@ -2,17 +2,16 @@ package com.bank.controller;
 
 import com.bank.dao.CustomerRepository;
 import com.bank.entity.Customer;
-import org.springframework.web.bind.annotation.*;
-
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/payment")
@@ -36,9 +35,8 @@ public class PaymentController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // Create charge
             Map<String, Object> chargeParams = new HashMap<>();
-            chargeParams.put("amount", amount * 100); // Convert to cents
+            chargeParams.put("amount", amount * 100);
             chargeParams.put("currency", "usd");
             chargeParams.put("source", token);
             chargeParams.put("description", "Banking App Payment");
@@ -48,17 +46,14 @@ public class PaymentController {
             response.put("status", "success");
             response.put("transactionId", charge.getId());
 
-            // ✅ Update User's Balance in Database
             Object userObj = session.getAttribute("user");
             Customer customer = repo.findByUsername(userObj.toString());
 
             customer.setBalance(customer.getBalance() + amount);
             repo.save(customer);
-
-            // ✅ Store updated balance in session for real-time update
             session.setAttribute("balance", customer.getBalance());
 
-            response.put("newBalance", customer.getBalance()); // Send updated balance to frontend
+            response.put("newBalance", customer.getBalance());
 
         } catch (StripeException e) {
             response.put("status", "error");
@@ -68,23 +63,11 @@ public class PaymentController {
         return response;
     }
 
-    // ✅ Update the user balance in database (Replace with actual DB update logic)
-    private void updateUserBalance(int amount) {
-        Object userObj = session.getAttribute("user");
-        Customer customer = repo.findByUsername(userObj.toString());
-
-        // Update user's balance
-        customer.setBalance(customer.getBalance() + amount);
-        repo.save(customer);
-    }
-
     @GetMapping("/stripe-key")
     public Map<String, String> getStripeKey() {
         return Map.of("publishableKey", stripePublishableKey);
     }
 
-
-    // ✅ Get current user balance
     @GetMapping("/balance")
     public Map<String, Object> getBalance() {
         Object userObj = session.getAttribute("user");
@@ -100,5 +83,4 @@ public class PaymentController {
 
         return Map.of("status", "success", "balance", customer.getBalance());
     }
-
 }

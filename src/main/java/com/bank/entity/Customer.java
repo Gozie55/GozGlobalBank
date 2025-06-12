@@ -1,30 +1,31 @@
 package com.bank.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-/**
- *
- * @author user
- */
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Customer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    float balance;
-    String firstname, lastname, email, username, password, accnumber;
-    long phone;
-    int age;
-    int pin;  
-    @Enumerated(EnumType.STRING)
-    private Role role;  // Store roles as ENUM in DB
+    private int id;
 
+    private float balance;
+    private String firstname;
+    private String lastname;
+    private String email;
+    private String username;
+    private String password;
+    private String accnumber;
+    private long phone;
+    private int age;
+    private int pin;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    // Getters and setters
 
     public int getId() {
         return id;
@@ -57,7 +58,7 @@ public class Customer {
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
-    
+
     public String getUsername() {
         return username;
     }
@@ -65,7 +66,7 @@ public class Customer {
     public void setUsername(String username) {
         this.username = username;
     }
-    
+
     public String getEmail() {
         return email;
     }
@@ -82,12 +83,12 @@ public class Customer {
         this.password = password;
     }
 
-    public int getAge() {
-        return age;
+    public String getAccnumber() {
+        return accnumber;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setAccnumber(String accnumber) {
+        this.accnumber = accnumber;
     }
 
     public long getPhone() {
@@ -98,13 +99,12 @@ public class Customer {
         this.phone = phone;
     }
 
-
-    public String getAccnumber() {
-        return accnumber;
+    public int getAge() {
+        return age;
     }
 
-    public void setAccnumber(String accnumber) {
-        this.accnumber = accnumber;
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public int getPin() {
@@ -122,10 +122,4 @@ public class Customer {
     public void setRole(Role role) {
         this.role = role;
     }
-    
-    
-    }
-
-enum Role{
-    USER, ADMIN
 }
